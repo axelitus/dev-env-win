@@ -202,8 +202,8 @@ SET output_file=%DEV_BIN%\php5.5.bat
 IF EXIST %output_file% DEL /F %output_file%
 
 :: Write file contents
-@ECHO ^@ECHO OFF >> %output_file%
-@ECHO CALL %%PHP5_5_EXE%% %%* >> %output_file%
+>>%output_file% ECHO ^@ECHO OFF
+>>%output_file% ECHO CALL %%PHP5_5_EXE%% %%*ECHO ()
 EXIT /b
 :: ===== End: WRITE_PHP5_5 =====
 
@@ -215,8 +215,8 @@ SET output_file=%DEV_BIN%\php5.5dbg.bat
 IF EXIST %output_file% DEL /F %output_file%
 
 :: Write file contents
-@ECHO @ECHO OFF >> %output_file%
-@ECHO CALL %%PHP5_5_EXE%% -dzend_extension=%%PHP5_5_XDBG%% %%* >> %output_file%
+>>%output_file% ECHO ^@ECHO OFF
+>>%output_file% ECHO CALL %%PHP5_5_EXE%% -dzend_extension=%%PHP5_5_XDBG%% %%*
 EXIT /b
 :: ===== End: WRITE_PHP5_5DBG =====
 
@@ -228,8 +228,8 @@ SET output_file=%DEV_BIN%\php5.6.bat
 IF EXIST %output_file% DEL /F %output_file%
 
 :: Write file contents
-@ECHO ^@ECHO OFF >> %output_file%
-@ECHO CALL %%PHP5_6_EXE%% %%* >> %output_file%
+>>%output_file% ECHO ^@ECHO OFF
+>>%output_file% ECHO CALL %%PHP5_6_EXE%% %%*
 EXIT /b
 :: ===== End: WRITE_PHP5_6 =====
 
@@ -241,8 +241,8 @@ SET output_file=%DEV_BIN%\php5.6dbg.bat
 IF EXIST %output_file% DEL /F %output_file%
 
 :: Write file contents
-@ECHO @ECHO OFF >> %output_file%
-@ECHO CALL %%PHP5_6_EXE%% -dzend_extension=%%PHP5_6_XDBG%% %%* >> %output_file%
+>>%output_file% ECHO ^@ECHO OFF
+>>%output_file% ECHO CALL %%PHP5_6_EXE%% -dzend_extension=%%PHP5_6_XDBG%% %%*
 EXIT /b
 :: ===== End: WRITE_PHP5_6DBG =====
 
@@ -254,8 +254,8 @@ SET output_file=%DEV_BIN%\php7.0.bat
 IF EXIST %output_file% DEL /F %output_file%
 
 :: Write file contents
-@ECHO ^@ECHO OFF >> %output_file%
-@ECHO CALL %%PHP7_0_EXE%% %%* >> %output_file%
+>>%output_file% ECHO ^@ECHO OFF
+>>%output_file% ECHO CALL %%PHP7_0_EXE%% %%*
 EXIT /b
 :: ===== End: WRITE_PHP7_0 =====
 
@@ -267,8 +267,8 @@ SET output_file=%DEV_BIN%\php7.0dbg.bat
 IF EXIST %output_file% DEL /F %output_file%
 
 :: Write file contents
-@ECHO @ECHO OFF >> %output_file%
-@ECHO CALL %%PHP7_0_EXE%% -dzend_extension=%%PHP7_0_XDBG%% %%* >> %output_file%
+>>%output_file% ECHO ^@ECHO OFF
+>>%output_file% ECHO CALL %%PHP7_0_EXE%% -dzend_extension=%%PHP7_0_XDBG%% %%*
 EXIT /b
 :: ===== End: WRITE_PHP7_0DBG =====
 
@@ -280,53 +280,54 @@ SET output_file=%DEV_BIN%\php.bat
 IF EXIST %output_file% DEL /F %output_file%
 
 :: Write file contents
-@ECHO ^@ECHO OFF >> %output_file%
-@ECHO CALL :RESET_ERROR_LEVEL >> %output_file%
-@ECHO. >> %output_file%
-@ECHO SET phpver=%%1 >> %output_file%
-@ECHO :: Gets rid of the first argument which should be the PHP version. >> %output_file%
-@ECHO FOR /f "tokens=1,* delims= " %%%%A in ("%%*") DO SET args=%%%%B >> %output_file%
-@ECHO. >> %output_file%
-@ECHO CALL :VERSION_%%phpver%% 2^>nul >> %output_file%
-@ECHO IF errorlevel 1 GOTO DEFAULT >> %output_file%
-@ECHO EXIT /b >> %output_file%
-@ECHO :: ===== End: Main ===== >> %output_file%
-@ECHO. >> %output_file%
-@ECHO. >> %output_file%
-@ECHO :RESET_ERROR_LEVEL >> %output_file%
-@ECHO :: Resets errorlevel to 0. >> %output_file%
-@ECHO :: -------------------- >> %output_file%
-@ECHO EXIT /b 0 >> %output_file%
-@ECHO :: ===== End: RESET_ERROR_LEVEL ===== >> %output_file%
-@ECHO. >> %output_file%
-@ECHO. >> %output_file%
-@ECHO :: Filters and sets the wanted php version. >> %output_file%
-@ECHO :VERSION_5.5 >> %output_file%
-@ECHO :VERSION_5.5dbg >> %output_file%
-@ECHO :VERSION_5.6 >> %output_file%
-@ECHO :VERSION_5.6dbg >> %output_file%
-@ECHO :VERSION_7.0 >> %output_file%
-@ECHO :VERSION_7.0dbg >> %output_file%
-@ECHO SET phpexec=php%%phpver%% >> %output_file%
-@ECHO GOTO EXEC >> %output_file%
-@ECHO :: ===== End: VERSION_* ===== >> %output_file%
-@ECHO. >> %output_file%
-@ECHO. >> %output_file%
-@ECHO :DEFAULT >> %output_file%
-@ECHO :: Sets the default PHP version if none is given or not a valid one >> %output_file%.
-@ECHO :: -------------------- >> %output_file%
-@ECHO SET args=%%* :: As no valid PHP version was given, the first argument should be valid. >> %output_file%
-@ECHO SET phpexec=php7.0 >> %output_file%
-@ECHO GOTO EXEC >> %output_file%
-@ECHO :: ===== End: DEFAULT ===== >> %output_file%
-@ECHO. >> %output_file%
-@ECHO. >> %output_file%
-@ECHO :EXEC >> %output_file%
-@ECHO :: Executes the given php version with arguments. >> %output_file%
-@ECHO :: -------------------- >> %output_file%
-@ECHO CALL %%phpexec%% %%args%% >> %output_file%
-@ECHO EXIT /b >> %output_file%
-@ECHO :: ===== End: EXEC ===== >> %output_file%
+>>%output_file% ECHO ^@ECHO OFF
+>>%output_file% ECHO CALL :RESET_ERROR_LEVEL
+>>%output_file% ECHO.
+>>%output_file% ECHO SET phpver=%%1
+>>%output_file% ECHO :: Gets rid of the first argument which should be the PHP version.
+>>%output_file% ECHO FOR /f "tokens=1,* delims= " %%%%A in ("%%*") DO SET args=%%%%B
+>>%output_file% ECHO.
+>>%output_file% ECHO CALL :VERSION_%%phpver%% 2^>nul
+>>%output_file% ECHO IF errorlevel 1 GOTO DEFAULT
+>>%output_file% ECHO EXIT /b
+>>%output_file% ECHO :: ===== End: Main =====
+>>%output_file% ECHO.
+>>%output_file% ECHO.
+>>%output_file% ECHO :RESET_ERROR_LEVEL
+>>%output_file% ECHO :: Resets errorlevel to 0.
+>>%output_file% ECHO :: --------------------
+>>%output_file% ECHO EXIT /b 0
+>>%output_file% ECHO :: ===== End: RESET_ERROR_LEVEL =====
+>>%output_file% ECHO.
+>>%output_file% ECHO.
+>>%output_file% ECHO :: Filters and sets the wanted php version.
+>>%output_file% ECHO :VERSION_5.5
+>>%output_file% ECHO :VERSION_5.5dbg
+>>%output_file% ECHO :VERSION_5.6
+>>%output_file% ECHO :VERSION_5.6dbg
+>>%output_file% ECHO :VERSION_7.0
+>>%output_file% ECHO :VERSION_7.0dbg
+>>%output_file% ECHO SET phpexec=php%%phpver%%
+>>%output_file% ECHO GOTO EXEC
+>>%output_file% ECHO :: ===== End: VERSION_* =====
+>>%output_file% ECHO.
+>>%output_file% ECHO.
+>>%output_file% ECHO :DEFAULT
+>>%output_file% ECHO :: Sets the default PHP version if none is given or not a valid one.
+>>%output_file% ECHO :: --------------------
+>>%output_file% ECHO :: As no valid PHP version was given, the first argument should be valid.
+>>%output_file% ECHO SET args=%%*
+>>%output_file% ECHO SET phpexec=php7.0
+>>%output_file% ECHO GOTO EXEC
+>>%output_file% ECHO :: ===== End: DEFAULT =====
+>>%output_file% ECHO.
+>>%output_file% ECHO.
+>>%output_file% ECHO :EXEC
+>>%output_file% ECHO :: Executes the given php version with arguments.
+>>%output_file% ECHO :: --------------------
+>>%output_file% ECHO CALL %%phpexec%% %%args%%
+>>%output_file% ECHO EXIT /b
+>>%output_file% ECHO :: ===== End: EXEC =====
 EXIT /b
 :: ===== End: WRITE_PHP =====
 
