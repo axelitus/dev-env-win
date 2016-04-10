@@ -5,7 +5,7 @@ SETLOCAL EnableDelayedExpansion
 :: Percents must be escaped with double %% to pass as 'var names' (e.g.: %%SystemRoot%%).
 SET known_entries="D:\xampp\5.5\php" "D:\xampp\5.6\php" "D:\xampp\7.0\php"
 
-:SELECT_ROOT
+:SELECT_OPTIONS
 :: Define development root
 SET root=
 IF "%1" == "" (SET /p "root=Please enter development root (empty for current path): ") ELSE (SET root=%1)
@@ -15,10 +15,15 @@ FOR /f "delims=" %%A IN ("%root%") DO (
 )
 IF "%root:~-1%" == "\" (SET "root=%root:~0,-1%")
 
-ECHO The path is not validated. Development root selected: [%root%]
-GOTO :CONFIRMATION
+SET phpver=
+IF "%2" == "" (SET /p "phpver=Please enter the default PHP version (enter for PHP7.0): ") ELSE (SET phpver=%2)
+IF "%phpver%" == "" (SET "phpver=7.0")
 
-:RESUME
+ECHO The root path is not validated. Development root selected: [%root%]
+ECHO The default PHP version selected is: [%phpver%]
+GOTO :CONFIRM_OPTIONS
+
+:RESUME_SELECTIONS
 ECHO The execution may take a while. Please wait.
 ECHO Preparing development environment...
 
@@ -55,17 +60,19 @@ GOTO END_SCRIPT
 :: ===== End: Main =====
 
 
-:CONFIRMATION
+:CONFIRM_OPTIONS
 :: Asks for confirmation to continue.
 :: --------------------
+SET answer=
 ECHO Are you sure you want to continue? If you continue some files will be overwritten.
 SET /p "answer=Please select 'Y' (default) to continue, 'N' to select another root or 'C' to cancel: "
-IF "%answer%" == "" GOTO RESUME
-IF /i "%answer%" EQU "Y" GOTO RESUME
-IF /i "%answer%" EQU "N" GOTO SELECT_ROOT
+IF "%answer%" == "" GOTO RESUME_SELECTIONS
+IF /i "%answer%" EQU "Y" GOTO RESUME_SELECTIONS
+IF /i "%answer%" EQU "N" GOTO SELECT_OPTIONS
 IF /i "%answer%" EQU "C" GOTO CANCEL
-GOTO CONFIRMATION
-:: ===== End: CONFIRMATION =====
+ECHO No valid option given.
+GOTO CONFIRM_OPTIONS
+:: ===== End: CONFIRM_OPTIONS =====
 
 
 :SETUP_DEV
@@ -125,6 +132,7 @@ EXIT /b
 :: Setup PHP environment variables.
 :: --------------------
 SETX PHP "%%DEV_BIN%%\php.bat"
+SETX PHP_VER "%phpver%"
 
 :: PHP 5.5 environment variables
 SETX PHP5_5 "%%XAMPP5_5%%\php"
@@ -292,13 +300,11 @@ IF EXIST %output_file% DEL /F %output_file%
 >>%output_file% ECHO EXIT /b
 >>%output_file% ECHO :: ===== End: Main =====
 >>%output_file% ECHO.
->>%output_file% ECHO.
 >>%output_file% ECHO :RESET_ERROR_LEVEL
 >>%output_file% ECHO :: Resets errorlevel to 0.
 >>%output_file% ECHO :: --------------------
 >>%output_file% ECHO EXIT /b 0
 >>%output_file% ECHO :: ===== End: RESET_ERROR_LEVEL =====
->>%output_file% ECHO.
 >>%output_file% ECHO.
 >>%output_file% ECHO :: Filters and sets the wanted php version.
 >>%output_file% ECHO :VERSION_5.5
@@ -311,23 +317,58 @@ IF EXIST %output_file% DEL /F %output_file%
 >>%output_file% ECHO GOTO EXEC
 >>%output_file% ECHO :: ===== End: VERSION_* =====
 >>%output_file% ECHO.
->>%output_file% ECHO.
 >>%output_file% ECHO :DEFAULT
 >>%output_file% ECHO :: Sets the default PHP version if none is given or not a valid one.
 >>%output_file% ECHO :: --------------------
 >>%output_file% ECHO :: As no valid PHP version was given, the first argument should be valid.
 >>%output_file% ECHO SET args=%%*
->>%output_file% ECHO SET phpexec=php7.0
+>>%output_file% ECHO IF DEFINED PHP_VER (SET phpver=%%PHP_VER%%) ELSE (SET "phpver=")
+>>%output_file% ECHO CALL :TRIM phpver %%phpver%%
+>>%output_file% ECHO IF "%%phpver%%" == "" SET "phpver=7.0"
+>>%output_file% ECHO SET phpexec=php%%phpver%%
 >>%output_file% ECHO GOTO EXEC
 >>%output_file% ECHO :: ===== End: DEFAULT =====
 >>%output_file% ECHO.
+>>%output_file% ECHO :TRIM ^<result^> ^<str^>
+>>%output_file% ECHO :: Trims the given string ^<str^> and sets the result in ^<result^>
+>>%output_file% ECHO :: Usage: CALL :TRIM var %%value%%
+>>%output_file% ECHO :: --------------------
+>>%output_file% ECHO SETLOCAL EnableDelayedExpansion
+>>%output_file% ECHO SET params=%%*
+>>%output_file% ECHO FOR /f "tokens=1*" %%%%A in ("^!params^!") DO ENDLOCAL ^& SET %%1=%%%%B
+>>%output_file% ECHO EXIT /b 0
+>>%output_file% ECHO :: ===== End: TRIM =====
 >>%output_file% ECHO.
 >>%output_file% ECHO :EXEC
 >>%output_file% ECHO :: Executes the given php version with arguments.
 >>%output_file% ECHO :: --------------------
+>>%output_file% ECHO CALL :TRIM phpexec %%phpexec%%
+>>%output_file% ECHO IF "%%~n0" == "%%phpexec%%" GOTO ERROR_LOOP
+>>%output_file% ECHO ECHO Executing: %%phpexec%% %%args%%
+>>%output_file% ECHO ECHO.
 >>%output_file% ECHO CALL %%phpexec%% %%args%%
->>%output_file% ECHO EXIT /b
+>>%output_file% ECHO GOTO END_SCRIPT
 >>%output_file% ECHO :: ===== End: EXEC =====
+>>%output_file% ECHO.
+>>%output_file% ECHO :ERROR_LOOP
+>>%output_file% ECHO :: Displays an error that may cause a call loop.
+>>%output_file% ECHO :: --------------------
+>>%output_file% ECHO ECHO Please check your PHP version [%%phpver%%] as it results in a script call loop.
+>>%output_file% ECHO GOTO PAUSE_END
+>>%output_file% ECHO :: ===== End: ERROR_LOOP =====
+>>%output_file% ECHO.
+>>%output_file% ECHO :PAUSE_END
+>>%output_file% ECHO :: Pauses and ends the script execution.
+>>%output_file% ECHO :: --------------------
+>>%output_file% ECHO PAUSE
+>>%output_file% ECHO GOTO END_SCRIPT
+>>%output_file% ECHO :: ===== End: PAUSE_END =====
+>>%output_file% ECHO.
+>>%output_file% ECHO :END_SCRIPT
+>>%output_file% ECHO :: Ends the script execution.
+>>%output_file% ECHO :: --------------------
+>>%output_file% ECHO EXIT /b
+>>%output_file% ECHO :: ===== End: END_SCRIPT =====
 EXIT /b
 :: ===== End: WRITE_PHP =====
 

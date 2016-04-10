@@ -32,10 +32,11 @@ The usage is straight forward. Just open an elevated command prompt (needed to m
 The command accepts just one option:
 
 ```
-C:\> setup-env <dev_root>
+C:\> setup-env <dev_root> <php_ver>
 ```
 
 - `<dev_root>` The development root path.
+- `<php_ver>` The default PHP version.
 
 #### Requirements
 
@@ -57,6 +58,7 @@ _**Note:** None of the paths contain a trailing slash._
 - `DEV` The selected `<dev_root>` path.
 - `DEV_BIN` The `%DEV%\bin` path for scripts and executables.
 - `PHP` The path to the PHP selector script `%DEV_BIN%\php.bat`.
+- `PHP_VER` The default PHP version for the PHP selector script.
 - `PHP5_5` The path to the XAMPP 5.5 PHP folder `%XAMPP5_5%\php`.
 - `PHP5_5_EXE` The path to the XAMPP 5.5 PHP executable `%PHP5_5%\php.exe`.
 - `PHP5_5_XDBG` The path to the XAMPP 5.5 PHP xdebug extension `%PHP5_5%\ext\php_xdebug.dll`.
