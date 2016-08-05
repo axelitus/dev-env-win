@@ -82,6 +82,9 @@ GOTO CONFIRM_OPTIONS
 :: --------------------
 SETX DEV %root%
 SETX DEV_BIN "%%DEV%%\bin"
+IF EXIST "%DEV_BIN%" GOTO DEV_BIN_EXISTS
+MKDIR "%DEV_BIN%"
+:DEV_BIN_EXISTS
 EXIT /b
 :: ===== End: SETUP_DEV =====
 
