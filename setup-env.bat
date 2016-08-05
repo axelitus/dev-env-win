@@ -92,7 +92,13 @@ EXIT /b
 :ADD_DEV_BIN_TO_PATH
 :: Add the development bin path to the PATH environment variable.
 :: --------------------
-FOR /f "usebackq skip=2 tokens=2,*" %%A IN (`REG QUERY "HKCU\Environment" /v "PATH" 2^>nul`) DO (
+REG QUERY "HKCU\Environment" /v "PATH" > NUL 2>&1
+IF %ERRORLEVEL% EQU 0 GOTO USER_PATH_EXISTS
+SETX PATH "%%DEV_BIN%%"
+EXIT /b
+
+:USER_PATH_EXISTS
+FOR /f "usebackq skip=2 tokens=2,*" %%A IN (`REG QUERY "HKCU\Environment" /v "PATH" 2^>NUL`) DO (
 	SET args=%%B
 	SET args=!args:%%=%%%%!
 	CALL :FILTER_DEV_BIN_FROM_PATH "!args!"
