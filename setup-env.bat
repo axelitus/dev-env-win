@@ -365,8 +365,9 @@ IF EXIST %output_file% DEL /F %output_file%
 >>%output_file% ECHO :: --------------------
 >>%output_file% ECHO CALL :TRIM phpexec %%phpexec%%
 >>%output_file% ECHO IF "%%~n0" == "%%phpexec%%" GOTO ERROR_LOOP
->>%output_file% ECHO ECHO Executing: %%phpexec%% %%args%%
->>%output_file% ECHO ECHO.
+>>%output_file% ECHO :: Uncomment the following two lines for debugging the command that gets executed.
+>>%output_file% ECHO :: ECHO Executing: %%phpexec%% %%args%%
+>>%output_file% ECHO :: ECHO.
 >>%output_file% ECHO CALL %%phpexec%% %%args%%
 >>%output_file% ECHO GOTO END_SCRIPT
 >>%output_file% ECHO :: ===== End: EXEC =====
