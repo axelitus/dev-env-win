@@ -149,16 +149,20 @@ SETX PHP_VER "%phpver%"
 SETX PHP5_5 "%%XAMPP5_5%%\php"
 SETX PHP5_5_EXE "%%PHP5_5%%\php.exe"
 SETX PHP5_5_XDBG "%%PHP5_5%%\ext\php_xdebug.dll"
+SETX PHP5_5_OPENSSL_CONF "%%PHP5_5%%\extras\openssl\openssl.cnf"
 
 :: PHP 5.6 environment variables
 SETX PHP5_6 "%%XAMPP5_6%%\php"
 SETX PHP5_6_EXE "%%PHP5_6%%\php.exe"
 SETX PHP5_6_XDBG "%%PHP5_6%%\ext\php_xdebug.dll"
+SETX PHP5_6_OPENSSL_CONF "%%PHP5_6%%\extras\openssl\openssl.cnf"
 
 :: PHP 7.0 environment variables
 SETX PHP7_0 "%%XAMPP7_0%%\php"
 SETX PHP7_0_EXE "%%PHP7_0%%\php.exe"
 SETX PHP7_0_XDBG "%%PHP7_0%%\ext\php_xdebug.dll"
+SETX PHP7_0_OPENSSL_CONF "%%PHP7_0%%\extras\openssl\openssl.cnf"
+
 EXIT /b
 :: ===== End: SETUP_PHP =====
 
@@ -222,6 +226,8 @@ IF EXIST %output_file% DEL /F %output_file%
 
 :: Write file contents
 >>%output_file% ECHO ^@ECHO OFF
+>>%output_file% ECHO SET OPENSSL_CONF^=%%PHP5_5_OPENSSL_CONF%%
+>>%output_file% ECHO CALL %%PHP5_5_EXE%% %%*
 EXIT /b
 :: ===== End: WRITE_PHP5_5 =====
 
@@ -234,6 +240,7 @@ IF EXIST %output_file% DEL /F %output_file%
 
 :: Write file contents
 >>%output_file% ECHO ^@ECHO OFF
+>>%output_file% ECHO SET OPENSSL_CONF^=%%PHP5_5_OPENSSL_CONF%%
 >>%output_file% ECHO CALL %%PHP5_5_EXE%% -dzend_extension=%%PHP5_5_XDBG%% %%*
 EXIT /b
 :: ===== End: WRITE_PHP5_5DBG =====
@@ -247,6 +254,7 @@ IF EXIST %output_file% DEL /F %output_file%
 
 :: Write file contents
 >>%output_file% ECHO ^@ECHO OFF
+>>%output_file% ECHO SET OPENSSL_CONF^=%%PHP5_6_OPENSSL_CONF%%
 >>%output_file% ECHO CALL %%PHP5_6_EXE%% %%*
 EXIT /b
 :: ===== End: WRITE_PHP5_6 =====
@@ -260,6 +268,7 @@ IF EXIST %output_file% DEL /F %output_file%
 
 :: Write file contents
 >>%output_file% ECHO ^@ECHO OFF
+>>%output_file% ECHO SET OPENSSL_CONF^=%%PHP5_6_OPENSSL_CONF%%
 >>%output_file% ECHO CALL %%PHP5_6_EXE%% -dzend_extension=%%PHP5_6_XDBG%% %%*
 EXIT /b
 :: ===== End: WRITE_PHP5_6DBG =====
@@ -273,6 +282,7 @@ IF EXIST %output_file% DEL /F %output_file%
 
 :: Write file contents
 >>%output_file% ECHO ^@ECHO OFF
+>>%output_file% ECHO SET OPENSSL_CONF^=%%PHP7_0_OPENSSL_CONF%%
 >>%output_file% ECHO CALL %%PHP7_0_EXE%% %%*
 EXIT /b
 :: ===== End: WRITE_PHP7_0 =====
@@ -286,6 +296,7 @@ IF EXIST %output_file% DEL /F %output_file%
 
 :: Write file contents
 >>%output_file% ECHO ^@ECHO OFF
+>>%output_file% ECHO SET OPENSSL_CONF^=%%PHP7_0_OPENSSL_CONF%%
 >>%output_file% ECHO CALL %%PHP7_0_EXE%% -dzend_extension=%%PHP7_0_XDBG%% %%*
 EXIT /b
 :: ===== End: WRITE_PHP7_0DBG =====
