@@ -16,7 +16,7 @@ FOR /f "delims=" %%A IN ("%root%") DO (
 IF "%root:~-1%" == "\" (SET "root=%root:~0,-1%")
 
 SET phpver=
-IF "%2" == "" (SET /p "phpver=Please enter the default PHP version (enter for PHP7.0): ") ELSE (SET phpver=%2)
+IF "%2" == "" (SET /p "phpver=Please enter the default PHP version (enter for PHP 7.0): ") ELSE (SET phpver=%2)
 IF "%phpver%" == "" (SET "phpver=7.0")
 
 ECHO The root path is not validated. Development root selected: [%root%]
@@ -28,24 +28,27 @@ ECHO The execution may take a while. Please wait.
 ECHO Preparing development environment...
 
 :: Setup development variables
+ECHO Setting up DEV variables...
 CALL :SETUP_DEV > NUL
 
 :: Setup PATH variable
+ECHO Adding DEV bin folder to PATH...
 CALL :ADD_DEV_BIN_TO_PATH > NUL
 
 :: Setup XAMPP variables
+ECHO Setting up XAMPP variables...
 CALL :SETUP_XAMPP > NUL
 
 :: Setup PHP variables
+ECHO Setting up PHP variables...
 CALL :SETUP_PHP > NUL
 
+:: Remove known entries from PATH
 ECHO Removing known entries from PATH variables...
-
 CALL :REMOVE_KNOWN_PATH_ENTRIES > NUL
 
-ECHO Writing script files...
-
 :: Write script files
+ECHO Writing script files...
 CALL :WRITE_PHP5_5 > NUL
 CALL :WRITE_PHP5_5DBG > NUL
 CALL :WRITE_PHP5_6 > NUL
@@ -55,7 +58,6 @@ CALL :WRITE_PHP7_0DBG > NUL
 CALL :WRITE_PHP > NUL
 
 ECHO Finished configuring the development environment.
-
 GOTO END_SCRIPT
 :: ===== End: Main =====
 
@@ -64,7 +66,7 @@ GOTO END_SCRIPT
 :: Asks for confirmation to continue.
 :: --------------------
 SET answer=
-ECHO Are you sure you want to continue? If you continue some files will be overwritten.
+ECHO Are you sure you want to continue? If you continue some files will be overwritten. If the root directory does not exist it will be created.
 SET /p "answer=Please select 'Y' (default) to continue, 'N' to select another root or 'C' to cancel: "
 IF "%answer%" == "" GOTO RESUME_SELECTIONS
 IF /i "%answer%" EQU "Y" GOTO RESUME_SELECTIONS
@@ -211,7 +213,6 @@ IF EXIST %output_file% DEL /F %output_file%
 
 :: Write file contents
 >>%output_file% ECHO ^@ECHO OFF
->>%output_file% ECHO CALL %%PHP5_5_EXE%% %%*ECHO ()
 EXIT /b
 :: ===== End: WRITE_PHP5_5 =====
 
