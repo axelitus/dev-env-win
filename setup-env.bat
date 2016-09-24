@@ -55,6 +55,8 @@ CALL :WRITE_PHP5_6 > NUL
 CALL :WRITE_PHP5_6DBG > NUL
 CALL :WRITE_PHP7_0 > NUL
 CALL :WRITE_PHP7_0DBG > NUL
+CALL :WRITE_PHP7_1 > NUL
+CALL :WRITE_PHP7_1DBG > NUL
 CALL :WRITE_PHP > NUL
 
 ECHO Finished configuring the development environment.
@@ -135,6 +137,7 @@ SETX XAMPP "%%DEV%%\xampp"
 SETX XAMPP5_5 "%%XAMPP%%\5.5"
 SETX XAMPP5_6 "%%XAMPP%%\5.6"
 SETX XAMPP7_0 "%%XAMPP%%\7.0"
+SETX XAMPP7_1 "%%XAMPP%%\7.1"
 EXIT /b
 :: ===== End: SETUP_XAMPP =====
 
@@ -162,6 +165,12 @@ SETX PHP7_0 "%%XAMPP7_0%%\php"
 SETX PHP7_0_EXE "%%PHP7_0%%\php.exe"
 SETX PHP7_0_XDBG "%%PHP7_0%%\ext\php_xdebug.dll"
 SETX PHP7_0_OPENSSL_CONF "%%PHP7_0%%\extras\openssl\openssl.cnf"
+
+:: PHP 7.1 environment variables
+SETX PHP7_1 "%%XAMPP7_1%%\php"
+SETX PHP7_1_EXE "%%PHP7_1%%\php.exe"
+SETX PHP7_1_XDBG "%%PHP7_1%%\ext\php_xdebug.dll"
+SETX PHP7_1_OPENSSL_CONF "%%PHP7_1%%\extras\openssl\openssl.cnf"
 
 EXIT /b
 :: ===== End: SETUP_PHP =====
@@ -302,6 +311,34 @@ EXIT /b
 :: ===== End: WRITE_PHP7_0DBG =====
 
 
+:WRITE_PHP7_1
+:: Write php7.1 script file.
+:: --------------------
+SET output_file=%DEV_BIN%\php7.1.bat
+IF EXIST %output_file% DEL /F %output_file%
+
+:: Write file contents
+>>%output_file% ECHO ^@ECHO OFF
+>>%output_file% ECHO SET OPENSSL_CONF^=%%PHP7_1_OPENSSL_CONF%%
+>>%output_file% ECHO CALL %%PHP7_1_EXE%% %%*
+EXIT /b
+:: ===== End: WRITE_PHP7_1 =====
+
+
+:WRITE_PHP7_1DBG
+:: Write php7.1dbg script file.
+:: --------------------
+SET output_file=%DEV_BIN%\php7.1dbg.bat
+IF EXIST %output_file% DEL /F %output_file%
+
+:: Write file contents
+>>%output_file% ECHO ^@ECHO OFF
+>>%output_file% ECHO SET OPENSSL_CONF^=%%PHP7_1_OPENSSL_CONF%%
+>>%output_file% ECHO CALL %%PHP7_1_EXE%% -dzend_extension=%%PHP7_1_XDBG%% %%*
+EXIT /b
+:: ===== End: WRITE_PHP7_1DBG =====
+
+
 :WRITE_PHP
 :: Write php script file.
 :: --------------------
@@ -334,6 +371,8 @@ IF EXIST %output_file% DEL /F %output_file%
 >>%output_file% ECHO :VERSION_5.6dbg
 >>%output_file% ECHO :VERSION_7.0
 >>%output_file% ECHO :VERSION_7.0dbg
+>>%output_file% ECHO :VERSION_7.1
+>>%output_file% ECHO :VERSION_7.1dbg
 >>%output_file% ECHO SET phpexec=php%%phpver%%
 >>%output_file% ECHO GOTO EXEC
 >>%output_file% ECHO :: ===== End: VERSION_* =====
